@@ -1,5 +1,6 @@
 import discord
 from typing import NamedTuple
+from dataclasses import dataclass, field
 
 class GameData(NamedTuple):
     name: str
@@ -8,7 +9,8 @@ class GameData(NamedTuple):
     tags: list
 
 
-class Request(NamedTuple):
+@dataclass
+class Request:
     #. Base
     FORUM: discord.ForumChannel
     MODCHAT: discord.TextChannel
@@ -19,7 +21,7 @@ class Request(NamedTuple):
     description: str = None
     image: discord.File = None
     tags: list = None
-    stroe: str = "Steam"
+    store: str = "Steam"
     store_link: str = ""
     #. Tech
     comment: str = ""
@@ -27,6 +29,6 @@ class Request(NamedTuple):
     by: discord.User = None
     status: str = ""
     to_mod: bool = False
-    mod_reasons: list = []
-    to_mod_tags = []
-    applied_tags = []
+    mod_reasons: list = field(default_factory=list)
+    to_mod_tags: list = field(default_factory=list)
+    applied_tags: list = field(default_factory=list)

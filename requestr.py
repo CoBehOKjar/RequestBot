@@ -254,12 +254,12 @@ def edit(req, link):
 def tag_converter(req, tags):
     logger.debug("Конвертация тегов...")
 
-    for t in tags:
-        tag = database.get_steam_tag_connection(t)
-        if tag != None:
-            req.applied_tags.insert(tag)
-        else:
-            req.to_mod = True
-            req.to_mod_tags.insert(tag)
+    # for t in tags:
+    #     tag = database.get_steam_tag_connection(t)
+    #     if tag != None:
+    #         req.applied_tags.insert(tag)
+    #     else:
+    #         req.to_mod = True
+    #         req.to_mod_tags.insert(tag)
 
     return req, tags

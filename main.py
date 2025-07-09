@@ -129,7 +129,7 @@ async def request(
 
     except Exception as e:
         await interaction.edit_original_response(content=f"{message}\n\nОшибка: {str(e)}")
-        logger.warning("Ошибка при создании топика")
+        logger.error("Ошибка при создании топика")
 
 
 #? Edit request command
