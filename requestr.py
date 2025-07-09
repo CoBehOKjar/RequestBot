@@ -12,7 +12,7 @@ from PIL import Image
 from bs4 import BeautifulSoup
 import classes
 
-import database
+import RequestBot.db.database as database
 
 
 

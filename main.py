@@ -8,7 +8,7 @@ from discord import app_commands
 from dotenv import load_dotenv
 
 import requestr
-import database
+import RequestBot.db.database as database
 import classes
 
 
