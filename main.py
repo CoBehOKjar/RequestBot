@@ -1,8 +1,8 @@
 # Request bot
 
 import os
-import logging
 import discord
+from loguru import logger
 from discord.ext import commands
 from discord import app_commands
 from dotenv import load_dotenv
@@ -30,7 +30,6 @@ print("Выданы права боту")
 
 #* Create bot.
 bot = commands.Bot(command_prefix="!!", intents=intents)
-handler = logging.FileHandler(filename='bot.log', encoding='utf-8', mode='w')
 print("Создана сущность бота")
 
 
@@ -145,4 +144,4 @@ async def request(
 #TODO ...
 
 
-bot.run(TOKEN, log_handler=handler, log_level=logging.DEBUG,)
+bot.run(TOKEN)
