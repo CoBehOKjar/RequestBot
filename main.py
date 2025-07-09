@@ -26,11 +26,11 @@ FORUMID = 1388512682147184691
 #* Bot's rights.
 intents = discord.Intents.default()
 intents.message_content = True
-print("Выданы права боту")
+logger.info("Выданы права боту")
 
 #* Create bot.
 bot = commands.Bot(command_prefix="!!", intents=intents)
-print("Создана сущность бота")
+logger.info("Создана сущность бота")
 
 
 
@@ -38,13 +38,13 @@ print("Создана сущность бота")
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print(f"{bot.user} активен!")
+    logger.info(f"{bot.user} активен!")
 
     global REQTOPIC, MODCHAT, FORUM
     REQTOPIC = await bot.fetch_channel(REQTOPICID)
     MODCHAT = await bot.fetch_channel(MODCHATID)
     FORUM = await bot.fetch_channel(FORUMID)
-    print(f"Каналы инициализированы: {REQTOPIC}, {MODCHAT}, {FORUM}")
+    logger.info(f"Каналы инициализированы: {REQTOPIC}, {MODCHAT}, {FORUM}")
 
 
 
@@ -81,9 +81,9 @@ async def request(
                           by=by
                           )
     
-    print("Запуск предложения...")
+    logger.info("Запуск предложения...")
     #. Is forum check
-    print("Проверка на форум...")
+    logger.debug("Проверка на форум...")
     if (
         interaction.channel_id != REQTOPICID
     ):
@@ -91,26 +91,23 @@ async def request(
             "Это не предложка!",
             ephemeral=True
         )
+        logger.warning("Попытка вызова реквеста не в предложке!")
         return
 
     
     #. Admin check
-    print("Проверка админки если использовано авторство...")
+    logger.debug("Проверка админки если использовано авторство...")
     if req.by is not None and not interaction.user.guild_permissions.administrator:
         await interaction.response.send_message(
             "Не для тебя поле сделано!",
             ephemeral=True
         )
+        logger.warning("Попытка не админа предложить от другого лица!")
         return
 
 
-    #. Response
-    print("Указание автора...")
-    user = req.by or interaction.user
-
-
     #. Status message sending
-    print("Создание сообщения о предложении...")
+    logger.debug("Создание сообщения о предложении...")
     message = f"Создание предложения по {game} ..."
     if req.comment:
         message += f"\nС комментарием:\n> {req.comment}"
@@ -118,22 +115,21 @@ async def request(
         message += f"\nОт лица: {req.by}"
 
     await interaction.response.send_message(message, ephemeral=True)
-    print("Ок")
 
 
     #. Creating topic
-    print("Запуск создания топика...")
+    logger.debug("Запуск создания топика...")
     #TODO сделать систему ошибок
     #TODO 404 - not found app
     try:
         requesting = await requestr.suggesting(req)
 
         await interaction.edit_original_response(content=f"{message}\n\n{requesting.status}")
-        print("Топик создан")
+        logger.info("Топик создан")
 
     except Exception as e:
         await interaction.edit_original_response(content=f"{message}\n\nОшибка: {str(e)}")
-        print("Ошибка при создании топика")
+        logger.warning("Ошибка при создании топика")
 
 
 #? Edit request command
