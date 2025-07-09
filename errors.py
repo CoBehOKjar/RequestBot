@@ -1,0 +1,3 @@
+# Обработчик ошибок
+#TODO ...
+#TODO 400 - request problems
