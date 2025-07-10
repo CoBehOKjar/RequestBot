@@ -13,24 +13,29 @@ from dotenv import load_dotenv
 #~ import ccommands
 
 
+
 #TODO навести порядок с капсом
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
 REQTOPICID = 1388513660602814524
 MODCHATID = 1389924810049589259
-FORUMID = 1388512682147184691
+FORUMID = 948839820086640674
 #REQTOPICID = int(database.get_config("REQUEST_TOPIC_ID")) #TODO Сделать проверку превого запуска и наличия рабочего чата
 #MODCHATID = int(database.get_config("MODERATION_CHAT_ID"))
 #FORUMID = int(database.get_config("FORUM_ID"))
 
 
-REQTOPIC: discord.TextChannel = None
-MODCHAT: discord.TextChannel = None
-FORUM: discord.ForumChannel = None
 
-async def gb_init(bot: commands.Bot):
+#* Create bot.
+bot = commands.Bot(command_prefix="!!", intents=discord.Intents.all())
+logger.info("Создана сущность бота")
+
+async def gb_init():
+    global REQTOPIC, MODCHAT, FORUM
     REQTOPIC = await bot.fetch_channel(REQTOPICID)
     MODCHAT = await bot.fetch_channel(MODCHATID)
     FORUM = await bot.fetch_channel(FORUMID)
 
     logger.info(f"Каналы инициализированы: {REQTOPIC}, {MODCHAT}, {FORUM}")
+
+bot.run(TOKEN)

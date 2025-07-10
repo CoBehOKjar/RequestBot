@@ -9,9 +9,10 @@ from discord import app_commands
 import requestr
 #~ import db.database as database
 import classes
-#~ import ccommands
+import ccommands
 import globals as GB
-from main import bot
+
+
 
 #TODO Slash commands:
 #? First launch command
@@ -20,8 +21,8 @@ from main import bot
 
 #? Request command
 #TODO ...
-# Command description
-@bot.tree.command(name="request", description="Предложить игру на канал.")
+#* Command description
+@GB.bot.tree.command(name="request", description="Предложить игру на канал.")
 @app_commands.describe(
      game = "Ссылка на игру или Steam AppID",
      comment = "*Комментарий",
@@ -30,7 +31,7 @@ from main import bot
 )
 
 
-# Command params
+#* Command params
 async def request(
     interaction: discord.Interaction,
     game: str,

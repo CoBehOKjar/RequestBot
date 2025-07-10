@@ -13,24 +13,9 @@ from discord.ext import commands
 #~ import ccommands
 import globals as GB
 
-
-
-#* Bot's rights.
-intents = discord.Intents.default()
-intents.message_content = True
-logger.info("Выданы права боту")
-
-#* Create bot.
-bot = commands.Bot(command_prefix="!!", intents=intents)
-logger.info("Создана сущность бота")
-
-
 #. Huh?
-@bot.event
+@GB.bot.event
 async def on_ready():
-    await bot.tree.sync()
-    logger.info(f"{bot.user} активен!")
-    await GB.gb_init(bot)
-
-
-bot.run(GB.TOKEN)
+    await GB.bot.tree.sync()
+    logger.info(f"{GB.bot.user} активен!")
+    await GB.gb_init()
