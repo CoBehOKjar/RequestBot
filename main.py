@@ -123,7 +123,7 @@ async def request(
         requesting = await requestr.suggesting(req)
 
         await interaction.edit_original_response(content=f"{message}\n\n{requesting.tech.status}")
-        logger.info(f"Создан топик: {bot.fetch_channel(req.tech.topic_id)} ({req.tech.topic_id})\nСообщение бота: {req.tech.message_id}")
+        await logger.info(f"Создан топик: {bot.fetch_channel(req.tech.topic_id)} ({req.tech.topic_id})\nСообщение бота: {req.tech.message_id}")
 
     except Exception as e:
         await interaction.edit_original_response(content=f"{message}\n\nОшибка: {str(e)}")

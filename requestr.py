@@ -66,10 +66,13 @@ async def suggesting(req: classes.Request) -> classes.Request:
         content += f"Комментарий: {req.params.comment}\n"
 
     content += f"[{req.info.store}]({req.info.store_link})\nПредложено:"
-    
+
+    #. Creating right mention
+    mention = req.params.by.mention if req.params.by else req.params.author.mention
+
     if req.params.ping:
         logger.debug("Пинг включен")
-        content += f" {req.params.by.mention or req.params.author.mention}"
+        content += f" {mention}"
 
     logger.debug("Создание топика...")
     thread, starter_message = await req.FORUM.create_thread(
@@ -82,7 +85,7 @@ async def suggesting(req: classes.Request) -> classes.Request:
 
     if not req.params.ping:
         logger.debug("Пинг выключен")
-        await starter_message.edit(content=content + f" {req.params.by.mention or req.params.author.mention}")
+        await starter_message.edit(content=content + f" {mention}")
 
 
     if not req.tech.to_mod:

@@ -27,8 +27,8 @@ class GameInfo:
 @dataclass
 class RequestParams:
     #. Params
-    author: discord.User
-    comment: str
+    author: discord.User = None
+    comment: str = None
     ping: bool = True
     by: discord.User = None
 
