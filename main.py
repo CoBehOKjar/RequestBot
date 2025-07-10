@@ -79,7 +79,7 @@ async def request(
     req.params.ping = ping
     req.params.by = by
     
-    logger.info("Запуск предложения...")
+    logger.info(f"Запуск предложения по: {req.link}")
     #. Is forum check
     logger.debug("Проверка на форум...")
     if (
@@ -107,10 +107,10 @@ async def request(
     #. Status message sending
     logger.debug("Создание сообщения о предложении...")
     message = f"Создание предложения по {game} ..."
-    if req.comment:
-        message += f"\nС комментарием:\n> {req.comment}"
-    if req.by:
-        message += f"\nОт лица: {req.by}"
+    if req.params.comment:
+        message += f"\nС комментарием:\n> {req.params.comment}"
+    if req.params.by:
+        message += f"\nОт лица: {req.params.by}"
 
     await interaction.response.send_message(message, ephemeral=True)
 
@@ -122,12 +122,12 @@ async def request(
     try:
         requesting = await requestr.suggesting(req)
 
-        await interaction.edit_original_response(content=f"{message}\n\n{requesting.status}")
-        logger.info("Топик создан")
+        await interaction.edit_original_response(content=f"{message}\n\n{requesting.tech.status}")
+        logger.info(f"Создан топик: {bot.fetch_channel(req.tech.topic_id)} ({req.tech.topic_id})\nСообщение бота: {req.tech.message_id}")
 
     except Exception as e:
         await interaction.edit_original_response(content=f"{message}\n\nОшибка: {str(e)}")
-        logger.error("Ошибка при создании топика")
+        logger.error(f"Ошибка при создании топика: {str(e)}")
 
 
 #? Edit request command

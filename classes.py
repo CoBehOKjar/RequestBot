@@ -30,12 +30,14 @@ class RequestParams:
     author: discord.User
     comment: str
     ping: bool = True
-    by: discord.User
+    by: discord.User = None
 
 
 @dataclass
 class TechInfo:
     #. Tech
+    topic_id: int = 0
+    message_id: int = 0
     status: str = ""
     to_mod: bool = False
     mod_reasons: list = field(default_factory=list)

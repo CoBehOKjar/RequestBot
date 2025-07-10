@@ -85,7 +85,7 @@ async def suggesting(req):
 
 
     if not req.to_mod:
-        req.status = "Игра добавлена в предложку."
+        req.tech.status = "Игра добавлена в предложку."
     return req #TODO система кодов ошибок и статусов
 
 
