@@ -1,6 +1,5 @@
 import os
 import time
-import logging
 import re
 import requests
 import discord

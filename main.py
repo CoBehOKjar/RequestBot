@@ -73,13 +73,11 @@ async def request(
     ping: bool = True,
     by: discord.User = None
 ):
-    req = classes.Request(FORUM=FORUM,
-                          MODCHAT=MODCHAT,
-                          game=game,
-                          comment=comment,
-                          ping=ping,
-                          by=by
-                          )
+    req = classes.Request(FORUM=FORUM, MODCHAT=MODCHAT, link=game)
+    req.params.author = interaction.user
+    req.params.comment = comment
+    req.params.ping = ping
+    req.params.by = by
     
     logger.info("Запуск предложения...")
     #. Is forum check
@@ -91,18 +89,18 @@ async def request(
             "Это не предложка!",
             ephemeral=True
         )
-        logger.warning("Попытка вызова реквеста не в предложке!")
+        logger.warning(f"{req.params.author} попытался вызвать реквест не в предложке!")
         return
 
     
     #. Admin check
     logger.debug("Проверка админки если использовано авторство...")
-    if req.by is not None and not interaction.user.guild_permissions.administrator:
+    if req.params.by is not None and not interaction.user.guild_permissions.administrator:
         await interaction.response.send_message(
             "Не для тебя поле сделано!",
             ephemeral=True
         )
-        logger.warning("Попытка не админа предложить от другого лица!")
+        logger.warning(f"{req.params.author} попытался зареквестить от лица {req.params.by} !")
         return
 
 
