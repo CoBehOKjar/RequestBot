@@ -1,4 +1,5 @@
-import os
+# Request logic
+#~ import os
 import time
 import re
 import requests
@@ -13,8 +14,8 @@ from bs4 import BeautifulSoup
 
 
 import classes
-import db.database as database
-import globals as GB
+#~ import db.database as database
+#~ import globals as GB
 
 
 

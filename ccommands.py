@@ -1,14 +1,15 @@
-import os
+# Bot commands
+#~ import os
 import discord
 from loguru import logger
-from discord.ext import commands
+#~ from discord.ext import commands
 from discord import app_commands
-from dotenv import load_dotenv
+#~ from dotenv import load_dotenv
 
 import requestr
-import db.database as database
+#~ import db.database as database
 import classes
-import ccommands
+#~ import ccommands
 import globals as GB
 from main import bot
 

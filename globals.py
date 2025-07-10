@@ -1,15 +1,16 @@
+# Global variables
 import os
-import time
+#~ import time
 import discord
 from loguru import logger
 from discord.ext import commands
-from discord import app_commands
+#~ from discord import app_commands
 from dotenv import load_dotenv
 
-import requestr
-import db.database as database
-import classes
-import ccommands
+#~ import requestr
+#~ import db.database as database
+#~ import classes
+#~ import ccommands
 
 
 #TODO навести порядок с капсом
@@ -28,8 +29,6 @@ MODCHAT: discord.TextChannel = None
 FORUM: discord.ForumChannel = None
 
 async def gb_init(bot: commands.Bot):
-    #? Waiting...
-    time.sleep(10)
     REQTOPIC = await bot.fetch_channel(REQTOPICID)
     MODCHAT = await bot.fetch_channel(MODCHATID)
     FORUM = await bot.fetch_channel(FORUMID)
