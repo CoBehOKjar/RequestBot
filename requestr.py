@@ -40,7 +40,7 @@ async def suggesting(req):
 
     #. Getting game data
     logger.debug("Получение информации об игре...")
-    req, game_data = get_game_data(req)
+    game_data = get_game_data(req)
 
     req.name = game_data.name
     req.description = game_data.description
@@ -158,7 +158,7 @@ def get_game_data(req):
     logger.debug("Получение тегов...")
     req, tags = get_tags(req)
 
-    return req, classes.GameData(
+    return classes.GameData(
         name=name,
         description=description,
         image=image,
@@ -183,9 +183,9 @@ def get_description(req):
     logger.debug("Проверка языка описания...")
     if description and re.search(r'[а-яА-Я]', description):
         logger.debug("Русский")
-        return req, description
+        return description
     logger.debug("Не русский")
-    return req, None #TODO обработка ошибок
+    return None #TODO обработка ошибок
 
 #* Getting game tags
 def get_tags(req):
@@ -209,11 +209,11 @@ def get_tags(req):
         
         tags = [a.text.lower().strip() for a in tag_section.find_all('a')[:6]]
         logger.debug("Теги найдены")
-        return req, tags
+        return tags
     
     except Exception:
         logger.error("Ошибка при получении тегов!")
-        return req, [] #TODO обработка ошибок
+        return [] #TODO обработка ошибок
    
 
 
@@ -246,7 +246,7 @@ def edit(req, link):
     edited_image.close()
 
     logger.debug("Изображение получено")
-    return req, image
+    return image
 
 
 #? Tags processing
@@ -262,4 +262,4 @@ def tag_converter(req, tags):
     #         req.to_mod = True
     #         req.to_mod_tags.insert(tag)
 
-    return req, tags
+    return tags
