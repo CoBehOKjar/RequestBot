@@ -21,18 +21,22 @@ import db.database as database
 async def suggesting(req: classes.Request) -> classes.Request:
     #? Check has forum & forum channel type
     if req.FORUM is None:
-        logger.error("Форум не выбран или не найден!")
-        return "Ошибка: Форум не выбран или не найден.\nНапиши техадмину."
+        req.errors.add_dev("Форум не выбран или не найден!")
+        req.errors.add_user("Форум не выбран или не найден. Напиши техадмину.")
+        req.errors.status = "Ошибка:"
+        return req
     if not isinstance(req.FORUM, discord.ForumChannel):
-        logger.error(f"{req.FORUM} не форум, а: {type(req.FORUM)}")
-        return f"Ошибка: Указанный канал не форум, а: {type(req.FORUM)}\nНапиши техадмину."
+        req.errors.add_dev(f"{req.FORUM} не форум, а: {type(req.FORUM)}")
+        req.errors.add_user(f"Ошибка: Указанный канал не форум, а: {type(req.FORUM)}. Напиши техадмину.")
+        req.errors.status = "Ошибка:"
+        return req
 
 
     #. Getting AppID & check validation
     logger.debug("Получение AppID...")
-    req.info.app_id = get_appid(req.link)
+    req = get_appid(req)
     if req.info.app_id == None:
-        logger.error("Игра не найдена!")
+        req.errors.add_dev("Игра не найдена!")
         return "Ошибка: Игра не найдена."
     # If have AppID - create Steam link 
     req.info.store_link = f"https://store.steampowered.com/app/{req.info.app_id}"
@@ -96,7 +100,7 @@ async def suggesting(req: classes.Request) -> classes.Request:
 
 #? AppID processing
 #* Getting AppID
-def get_appid(link: str):
+def get_appid(link: str, req: classes.Request):
     raw_link = link.strip()
 
     #. Is no link check
@@ -117,7 +121,10 @@ def get_appid(link: str):
         if match:
             return valid_appid(int(match.group(1)))
 
-    return None #TODO обработка ошибок
+    errors.add_dev(f"Не найдена страница Steam по: {link}")
+    errors.add_user(f"Не найдена страница Steam по: {link}")
+    errors.status = "Ошибка:"
+    return
 
 
 #* Check ID validate

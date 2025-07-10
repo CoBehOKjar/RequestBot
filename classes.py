@@ -1,4 +1,6 @@
 import discord
+from discord.ext import commands
+from discord import app_commands
 from typing import NamedTuple
 from dataclasses import dataclass, field
 from loguru import logger
@@ -9,6 +11,22 @@ class GameData(NamedTuple):
     description: str
     image:str
     tags: list
+
+
+class Buttons(discord.ui.View):
+    def __init__(self, req):
+        super().__init__(timeout=60)
+        self.req = req
+    
+    @discord.ui.button(label="На модерацию", style=discord.ButtonStyle.green)
+    async def send_to_mod(self, interaction: discord.Interaction):
+        #TODO отправка в модчат
+        await interaction.response.send_message("Отправлено", ephemeral=True)
+
+    @discord.ui.button(label="Отмена", style=discord.ButtonStyle.red)
+    async def send_to_mod(self, interaction: discord.Interaction):
+        #TODO отмена
+        await interaction.response.send_message("Отменено", ephemeral=True)
 
 
 
@@ -38,7 +56,6 @@ class TechInfo:
     #. Tech
     topic_id: int = 0
     message_id: int = 0
-    status: str = ""
     to_mod: bool = False
     mod_reasons: list = field(default_factory=list)
     to_mod_tags: list = field(default_factory=list)
@@ -47,6 +64,7 @@ class TechInfo:
 
 @dataclass
 class Errors:
+    status: str = ""
     user_output: list[str] = field(default_factory=list)
     dev_output: list[str] = field(default_factory=list)
 
