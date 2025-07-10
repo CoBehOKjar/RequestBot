@@ -85,7 +85,7 @@ async def suggesting(req: classes.Request) -> classes.Request:
 
     if not req.params.ping:
         logger.debug("Пинг выключен")
-        await starter_message.edit(content=content + f" {mention}")
+        await starter_message.edit(content=content + f" {mention}", suppress_embeds=True)
 
 
     if not req.tech.to_mod:
