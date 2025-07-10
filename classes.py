@@ -3,6 +3,7 @@ from typing import NamedTuple
 from dataclasses import dataclass, field
 
 class GameData(NamedTuple):
+    #. Raw game data from steam
     name: str
     description: str
     image:str
@@ -14,8 +15,12 @@ class Request:
     #. Base
     FORUM: discord.ForumChannel
     MODCHAT: discord.TextChannel
+    link: str
+
+
+@dataclass
+class GameInfo:
     #. Game
-    game: str = None
     app_id: int = None
     name: str = None
     description: str = None
@@ -23,10 +28,19 @@ class Request:
     tags: list = None
     store: str = "Steam"
     store_link: str = ""
-    #. Tech
+
+
+@dataclass
+class RequestParams:
+    #. Params
     comment: str = ""
     ping: bool = True
     by: discord.User = None
+
+
+@dataclass
+class TechInfo:
+    #. Tech
     status: str = ""
     to_mod: bool = False
     mod_reasons: list = field(default_factory=list)
