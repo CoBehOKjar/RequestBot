@@ -18,73 +18,74 @@ import db.database as database
 
 
 #TODO Suggesting logic
-async def suggesting(req):
+async def suggesting(req: classes.Request) -> classes.Request:
+    #? Check has forum & forum channel type
     if req.FORUM is None:
         logger.error("Форум не выбран или не найден!")
         return "Ошибка: Форум не выбран или не найден.\nНапиши техадмину."
     if not isinstance(req.FORUM, discord.ForumChannel):
-        logger.error("Указанный форум не является форумом!")
+        logger.error(f"{req.FORUM} не форум, а: {type(req.FORUM)}")
         return f"Ошибка: Указанный канал не форум, а: {type(req.FORUM)}\nНапиши техадмину."
 
 
     #. Getting AppID & check validation
     logger.debug("Получение AppID...")
-    req.app_id = get_appid(req.game)
-    if req.app_id == None:
+    req.info.app_id = get_appid(req.link)
+    if req.info.app_id == None:
         logger.error("Игра не найдена!")
         return "Ошибка: Игра не найдена."
     # If have AppID - create Steam link 
-    req.store_link = f"https://store.steampowered.com/app/{req.app_id}"
+    req.info.store_link = f"https://store.steampowered.com/app/{req.info.app_id}"
     
 
     #. Getting game data
     logger.debug("Получение информации об игре...")
     game_data = get_game_data(req)
 
-    req.name = game_data.name
-    req.description = game_data.description
+    req.info.name = game_data.name
+    req.info.description = game_data.description
     image = game_data.image
     tags = game_data.tags
 
 
     #. Editing image
     logger.debug("Редактирование изображения...")
-    req.image = edit(req, image)
+    req.info.image = edit(image)
 
 
     #. Tags sync
     logger.debug("Синхронизация тегов...")
-    req.tags = tag_converter(req, tags)
+    req.info.tags = tag_converter(tags)
 
 
     #. Message construct
     logger.debug("Сборка предложения...")
-    content = f"{req.description}\n\n"
+    content = f"{req.info.description}\n\n"
 
-    if req.comment:
-        content += f"Комментарий: {req.comment}\n"
+    if req.params.comment:
+        content += f"Комментарий: {req.params.comment}\n"
 
-    content += f"[{req.store}]({req.store_link})\nПредложено:"
+    content += f"[{req.info.store}]({req.info.store_link})\nПредложено:"
     
-    if req.ping:
+    if req.params.ping:
         logger.debug("Пинг включен")
-        content += f" {req.by.mention}"
+        content += f" {req.params.by.mention or req.params.author.mention}"
 
     logger.debug("Создание топика...")
     thread, starter_message = await req.FORUM.create_thread(
-        name=req.name,
+        name=req.info.name,
         content=content,
         #applied_tags=dtags,
-        file=req.image,
+        file=req.info.image,
         suppress_embeds=True
     )
 
-    if not req.ping:
+    if not req.params.ping:
         logger.debug("Пинг выключен")
-        await starter_message.edit(content=content + f" {req.by.mention}")
+        await starter_message.edit(content=content + f" {req.params.by.mention or req.params.author.mention}")
 
 
-    if not req.to_mod:
+    if not req.tech.to_mod:
         req.tech.status = "Игра добавлена в предложку."
     return req #TODO система кодов ошибок и статусов
 
@@ -133,13 +134,13 @@ def valid_appid(app_id):
 
 #? Game data pocessing
 #* Getting game name, description, tags, image
-def get_game_data(req):
+def get_game_data(req: classes.Request):
     logger.debug("Запрос информации...")
-    app_url = f"https://store.steampowered.com/api/appdetails?appids={req.app_id}&l=english"
+    app_url = f"https://store.steampowered.com/api/appdetails?appids={req.info.app_id}&l=english"
     response = requests.get(app_url)
     time.sleep(1)
     data = response.json()
-    data = data[str(req.app_id)]['data']
+    data = data[str(req.info.app_id)]['data']
 
     #. Get English game name
     logger.debug("Получение названия игры...")
@@ -151,11 +152,11 @@ def get_game_data(req):
 
     #. Get Russian description.
     logger.debug("Получение описания...")
-    req, description = get_description(req)
+    description = get_description(req)
 
     #. Get tags
     logger.debug("Получение тегов...")
-    req, tags = get_tags(req)
+    tags = get_tags(req)
 
     return classes.GameData(
         name=name,
@@ -166,13 +167,13 @@ def get_game_data(req):
 
 
 #* Getting russian description
-def get_description(req):
+def get_description(req: classes.Request):
     logger.debug("Запрос описания...")
-    app_url = f"https://store.steampowered.com/api/appdetails?appids={req.app_id}&l=russian"
+    app_url = f"https://store.steampowered.com/api/appdetails?appids={req.info.app_id}&l=russian"
     response = requests.get(app_url)
     time.sleep(1)
     data = response.json()
-    data = data[str(req.app_id)]['data']
+    data = data[str(req.info.app_id)]['data']
 
     #. Get description
     logger.debug("Выкорчевывание описания...")
@@ -187,9 +188,9 @@ def get_description(req):
     return None #TODO обработка ошибок
 
 #* Getting game tags
-def get_tags(req):
+def get_tags(req: classes.Request):
     logger.debug("Запрос тегов...")
-    app_url = f"https://store.steampowered.com/app/{req.app_id}"
+    app_url = f"https://store.steampowered.com/app/{req.info.app_id}"
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
         'Accept-Language': 'en-US,en;q=0.5'
@@ -218,7 +219,7 @@ def get_tags(req):
 
 #? Image processing
 #* Downloading and editing image
-def edit(req, link):
+def edit(link):
     logger.debug("Запрос изображения...")
     response = requests.get(link)
     if response.status_code != 200:
@@ -250,7 +251,7 @@ def edit(req, link):
 
 #? Tags processing
 #* Converter steam tags to discord tags
-def tag_converter(req, tags):
+def tag_converter(tags):
     logger.debug("Конвертация тегов...")
 
     # for t in tags:
