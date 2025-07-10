@@ -30,7 +30,7 @@ logger.info("Создана сущность бота")
 async def on_ready():
     await bot.tree.sync()
     logger.info(f"{bot.user} активен!")
+    await GB.gb_init(bot)
 
-GB.gb_init(bot)
 
 bot.run(GB.TOKEN)
