@@ -9,6 +9,8 @@ import requestr
 import db.database as database
 import classes
 import ccommands
+import globals as GB
+from main import bot
 
 #TODO Slash commands:
 #? First launch command
@@ -35,7 +37,7 @@ async def request(
     ping: bool = True,
     by: discord.User = None
 ):
-    req = classes.Request(FORUM=FORUM, MODCHAT=MODCHAT, link=game)
+    req = classes.Request(FORUM=GB.FORUM, MODCHAT=GB.MODCHAT, link=game)
     req.params.author = interaction.user
     req.params.comment = comment
     req.params.ping = ping
@@ -45,7 +47,7 @@ async def request(
     #. Is forum check
     logger.debug("Проверка на форум...")
     if (
-        interaction.channel_id != REQTOPICID
+        interaction.channel_id != GB.REQTOPICID
     ):
         await interaction.response.send_message(
             "Это не предложка!",

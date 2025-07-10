@@ -14,6 +14,7 @@ from bs4 import BeautifulSoup
 
 import classes
 import db.database as database
+import globals as GB
 
 
 
